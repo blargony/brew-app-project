@@ -25,6 +25,7 @@ class TestCase(unittest.TestCase):
         db.app = app
         db.init_app(app)
         db.create_all()
+        seed_db()
 
     def tearDown(self):
         """
@@ -76,9 +77,10 @@ class TestCase(unittest.TestCase):
         db.session.commit()
 
         rv = self.login('jsmith', 'test')
-        self.assertTrue('Logout' in rv.data)
+        self.assertTrue('Logout</a>' in rv.data)
+
         rv = self.logout()
-        self.assertTrue('Login' in rv.data)
+        self.assertTrue('Log In</a>' in rv.data)
 
         rv = self.login('jsmith', 'testb')
         self.assertTrue('User name and password do not match' in rv.data)
@@ -90,7 +92,6 @@ class TestCase(unittest.TestCase):
     # Test Beer Edit Views
     # ==============================================================================
     def test_est_color(self):
-        seed_db()
         color_json = {u'units': u'gallons', u'extracts': [{u'name': u'extract', u'value': u'Ultralight Extract (MoreBeer)'}, {u'name': u'extract_amount', u'value': u'144.0'}, {u'name': u'extract-units', u'value': u'ounces'}, {u'name': u'extract', u'value': u'Dry Light Extract'}, {u'name': u'extract_amount', u'value': u'8.0'}, {u'name': u'extract-units', u'value': u'ounces'}], u'grains': [{u'name': u'grain', u'value': u'Crystal 15'}, {u'name': u'grain_amount', u'value': u'12.0'}, {u'name': u'grain_units', u'value': u'ounces'}], u'batch_size': u'5.28'}
 
         rv = self.app.post('/colorcalc', data=json.dumps(color_json), content_type='application/json')
